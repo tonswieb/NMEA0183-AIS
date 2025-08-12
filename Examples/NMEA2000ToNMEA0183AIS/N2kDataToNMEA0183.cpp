@@ -266,9 +266,9 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   uint32_t _UserID;  // MMSI
   uint32_t _IMONumber;
   char _Callsign[8];
-  size_t _CallsignBufSize;
+  size_t _CallsignBufSize 8;
   char _Name[21];
-  size_t _NameBufSize;
+  size_t _NameBufSize = 21;
   uint8_t _VesselType;
   double _Length;
   double _Beam;
@@ -278,7 +278,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   double _ETAtime;
   double _Draught;
   char _Destination[21];
-  size_t _DestinationBufSize;
+  size_t _DestinationBufSize = 21;
   tN2kAISVersion _AISversion;
   tN2kGNSStype _GNSStype;
   tN2kAISTransceiverInformation _AISinfo;
@@ -407,7 +407,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24A(const tN2kMsg &N2kMsg) {
   tN2kAISRepeat _Repeat;
   uint32_t _UserID;  // MMSI
   char _Name[21];
-  size_t _NameBufSize;
+  size_t _NameBufSize = 21;
 
   if ( ParseN2kPGN129809 (N2kMsg, _MessageID, _Repeat, _UserID, _Name, _NameBufSize) ) {
 
@@ -425,9 +425,9 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
   tN2kAISRepeat _Repeat;
   uint32_t _UserID, _MothershipID;  // MMSI
   char _Vendor[4];
-  size_t _VendorBufSize;
+  size_t _VendorBufSize = 4;
   char _Callsign[8];
-  size_t _CallsignBufSize;
+  size_t _CallsignBufSize = 8;
   uint8_t _VesselType;
   double _Length;
   double _Beam;
