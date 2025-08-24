@@ -370,9 +370,10 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
   bool _Display, _DSC, _Band, _Msg22, _State;
   tN2kAISMode _Mode;
   tN2kAISTransceiverInformation _AISTransceiverInformation;
+  u_int8_t _SID;
 
-  if ( ParseN2kPGN129039(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
-                     _Seconds, _COG, _SOG, _AISTransceiverInformation, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
+  if ( ParseN2kAISClassBPosition(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
+                     _Seconds, _COG, _SOG, _AISTransceiverInformation, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State, _SID) ) {
 
     tNMEA0183AISMsg NMEA0183AISMsg;
 
@@ -409,7 +410,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24A(const tN2kMsg &N2kMsg) {
   char _Name[21];
   size_t _NameBufSize = 21;
 
-  if ( ParseN2kPGN129809 (N2kMsg, _MessageID, _Repeat, _UserID, _Name, _NameBufSize) ) {
+  if ( ParseN2kAISClassBStaticPartA (N2kMsg, _MessageID, _Repeat, _UserID, _Name, _NameBufSize) ) {
 
     tNMEA0183AISMsg NMEA0183AISMsg;
     if ( SetAISClassBMessage24PartA(NMEA0183AISMsg, _MessageID, _Repeat, _UserID, _Name) ) {}
@@ -434,7 +435,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
   double _PosRefStbd;
   double _PosRefBow;
 
-  if ( ParseN2kPGN129810(N2kMsg, _MessageID, _Repeat, _UserID,
+  if ( ParseN2kAISClassBStaticPartB(N2kMsg, _MessageID, _Repeat, _UserID,
                         _VesselType, _Vendor, _VendorBufSize, _Callsign, _CallsignBufSize, _Length, _Beam,
                         _PosRefStbd, _PosRefBow, _MothershipID) ) {
 
