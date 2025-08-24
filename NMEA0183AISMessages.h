@@ -31,6 +31,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <string.h>
 #include <N2kTypes.h>
+#include <N2kMessages.h>
 #include "NMEA0183AISMsg.h"
 #include <stddef.h>
 #include <vector>
@@ -59,6 +60,8 @@ bool SetAISClassAMessage5(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, ui
                           uint8_t VesselType, double Length, double Beam, double PosRefStbd,
                           double PosRefBow, uint16_t ETAdate,  double ETAtime, double Draught,
                           char *Destination, tN2kGNSStype GNSStype, uint8_t DTE );
+
+bool SetAISAtoNMessage21(tNMEA0183AISMsg &NMEA0183AISMsg, tN2kAISAtoNReportData &N2kData);
 
 //*****************************************************************************
 // AIS position report (class B 129039) -> Standard Class B CS Position Report Message Type 18 Part B

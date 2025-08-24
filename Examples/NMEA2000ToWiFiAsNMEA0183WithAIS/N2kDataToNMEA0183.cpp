@@ -69,6 +69,7 @@ void tN2kDataToNMEA0183::HandleMsg(const tN2kMsg &N2kMsg) {
     case 129794UL: HandleAISClassAMessage5(N2kMsg);  break;   // AIS Class A Ship Static and Voyage related data, Message Type 5
     case 129809UL: HandleAISClassBMessage24A(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part A
     case 129810UL: HandleAISClassBMessage24B(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part B
+    case 129041UL: HandleAISAtoNMessage21(N2kMsg); break;  // AIS AtoN Report
   }
 }
 
@@ -553,4 +554,15 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
     }
   }
   return;
+}
+
+void tN2kDataToNMEA0183::HandleAISAtoNMessage21(const tN2kMsg &N2kMsg) {
+
+  tN2kAISAtoNReportData N2KData;
+  tNMEA0183AISMsg NMEA0183AISMsg;
+  if (ParseN2kAISAtoNReport(N2kMsg, N2kData)) {
+    if (SetAISAtoNMessage21(NMEA0183AISMsg, N2KData)) {
+      SendMessage(NMEA0183AISMsg);
+    }
+  }
 }

@@ -22,6 +22,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#include <Arduino.h>
 #include <NMEA0183.h>
 #include <NMEA2000.h>
 
@@ -87,4 +88,5 @@ public:
   void HandleAISClassBMessage18(const tN2kMsg &N2kMsg);    // 129039 AIS Class B Position Report
   void HandleAISClassBMessage24A(const tN2kMsg &N2kMsg);  // 129809 AIS Class B "CS" Static Data Report, Part A
   void HandleAISClassBMessage24B(const tN2kMsg &N2kMsg);  // 129810 AIS Class B "CS" Static Data Report, Part B
+  void HandleAISAtoNMessage21(const tN2kMsg &N2kMsg); // 129041 AIS (AtoN) Aids-to-navigation report
 };
