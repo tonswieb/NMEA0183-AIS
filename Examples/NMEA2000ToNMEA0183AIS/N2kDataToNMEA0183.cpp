@@ -266,7 +266,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   uint32_t _UserID;  // MMSI
   uint32_t _IMONumber;
   char _Callsign[8];
-  size_t _CallsignBufSize 8;
+  size_t _CallsignBufSize = 8;
   char _Name[21];
   size_t _NameBufSize = 21;
   uint8_t _VesselType;
