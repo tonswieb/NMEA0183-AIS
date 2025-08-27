@@ -225,6 +225,27 @@ const char *tNMEA0183AISMsg::GetPayload() {
   return Payload;
 }
 
+// Get converted payload for Message 21.
+// Length is 272 when the Name of Aid-to-Navigation is 20 characters or smaller.
+// This is a multiple of 8-bits but not a multiple of 6-bits, so requires padding to a 
+// multiple of 6-bit otherwise this lib doesn't send the last 2 bits, which are Assigned Mode flag and Spare.
+// Resulting in a 6-bit char mising in this NMEA0183 sentenc and this message to be marked invalid by receivers.
+// Length is between 272 and 360 when the extension is used.
+const char *tNMEA0183AISMsg::GetPayloadType21() {
+
+  uint16_t lenbin = strlen( PayloadBin);
+  if (lenbin < 272 || lenbin > 360) return nullptr;
+  size_t remainingBits = lenbin % 6;
+  if (remainingBits > 0) {
+    //Padd to ensure total bites is a multiple of 6
+    if (! AddIntToPayloadBin(0, 6 - remainingBits) ) return nullptr;
+  }
+
+  if ( !ConvertBinaryAISPayloadBinToAscii( PayloadBin ) ) return nullptr;
+  return Payload;
+}
+
+
 //******************************************************************************
 // get converted Part 1 of Payload for Message 5
 const char *tNMEA0183AISMsg::GetPayloadType5_Part1() {

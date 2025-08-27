@@ -65,6 +65,7 @@ class tNMEA0183AISMsg : public tNMEA0183Msg {
   public:
     tNMEA0183AISMsg();
     const char *GetPayload();
+    const char *GetPayloadType21();
     const char *GetPayloadType5_Part1();
     const char *GetPayloadType5_Part2();
     const char *GetPayloadType24_PartA();

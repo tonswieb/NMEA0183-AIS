@@ -289,31 +289,41 @@ bool SetAISAtoNMessage21(tNMEA0183AISMsg &NMEA0183AISMsg, tN2kAISAtoNReportData 
   if ( !AddMessageType(NMEA0183AISMsg,N2kData.MessageID) ) return false;                     //   0 - 5   | 6    Message Type -> Constant: 24
   if ( !AddRepeat(NMEA0183AISMsg, N2kData.Repeat) ) return false;                            //   6 - 7   | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
   if ( !AddUserID(NMEA0183AISMsg, N2kData.UserID) ) return false;                            //   8 - 37  | 30  MMSI
-  if ( !AddAtoNType(NMEA0183AISMsg, N2kData.AtoNType) ) return false;                        //  38 - 42  | 30  Type of aids-to-navigation; 0 = not available = default
+  if ( ! NMEA0183AISMsg.AddIntToPayloadBin(N2kData.AtoNType, 5) ) return false;              //  38 - 42  | 30  Type of aids-to-navigation; 0 = not available = default
   if ( !NMEA0183AISMsg.AddEncodedCharToPayloadBin(N2kData.AtoNName, 120) ) return false;     //  43 - 162 | 120 Name of Aids-to-Navigation; Maximum 20 characters 6-bit ASCII, as defined in Table 47 “@@@@@@@@@@@@@@@@@@@@” = not available = default.
   if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.Accuracy, 1)) return false;               // 163 - 163 | 1    GPS Accuracy 1 oder 0, Default 0
   if ( !AddLongitude(NMEA0183AISMsg, N2kData.Longitude) ) return false;                      // 164 - 191 | 28  Longitude in Minutes / 10000
   if ( !AddLatitude(NMEA0183AISMsg, N2kData.Latitude) ) return false;                        // 192 - 218 | 27  Latitude in Minutes / 10000
   if ( !AddDimensions(NMEA0183AISMsg, N2kData.Length, N2kData.Beam, N2kData.PositionReferenceStarboard, N2kData.PositionReferenceTrueNorth) ) return false;  // 219-248 | 30 Dimensions
-  if ( ! NMEA0183AISMsg.AddIntToPayloadBin(N2kData.GNSSType, 4) ) return false;              // 249 - 252
+  if ( !NMEA0183AISMsg.AddIntToPayloadBin(N2kData.GNSSType, 4) ) return false;               // 249 - 252
   if ( !AddSeconds(NMEA0183AISMsg, N2kData.Seconds) ) return false;                          // 253 - 258  | 6    Seconds in UTC timestamp)
-  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.OffPositionIndicator, 1) ) return false;  // 259 - 259  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
-  if ( !NMEA0183AISMsg.AddIntToPayloadBin(N2kData.AtoNStatus, 8) ) return false;             // 260 - 267  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
+  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.OffPositionIndicator, 1) ) return false;  // 259 - 259  | 1   
+  if ( !NMEA0183AISMsg.AddIntToPayloadBin(N2kData.AtoNStatus, 8) ) return false;             // 260 - 267  | 1   
   if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.RAIM, 1) ) return false;                  // 268 - 268  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
-  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.VirtualAtoNFlag, 1) ) return false;       // 269 - 269  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
-  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.AssignedModeFlag, 1) ) return false;      // 270 - 270  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
-  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(spare, 1) ) return false;                         // 271 - 271  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
+  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.VirtualAtoNFlag, 1) ) return false;       // 269 - 269  | 1   
+  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(N2kData.AssignedModeFlag, 1) ) return false;      // 270 - 270  | 1   
+  if ( !NMEA0183AISMsg.AddBoolToPayloadBin(spare, 1) ) return false;                         // 271 - 271  | 1   
   if ( !AddAtoNNameExtension(NMEA0183AISMsg, N2kData.AtoNName) ) return false;               // 272 - 360  | 14 additional 6-bit ASCII characters + padding up to complete bytes 
+
+  if ( !NMEA0183AISMsg.Init("VDM","AI", Prefix) ) return false;
+  if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
+  if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
+  if ( !NMEA0183AISMsg.AddEmptyField() ) return false;
+  if ( !NMEA0183AISMsg.AddStrField("A") ) return false;
+  if ( !NMEA0183AISMsg.AddStrField( NMEA0183AISMsg.GetPayloadType21() ) ) return false;
+
+  return true;
 }
 
 //******************************************************************************
 //                 Validations and Unit Transformations
 //******************************************************************************
 
+// Name of Aid-to-Navigation Extension
 // This parameter of up to 14 additional 6-bit-ASCII characters for a 2-slot message may be combined with the parameter “Name of Aid-to-
 // Navigation” at the end of that parameter, when more than 20 characters are needed for the name of the AtoN. This parameter should be omitted when no
 // more than 20 characters for the name of the A-to-N are needed in total. Only the required number of characters should be transmitted, i.e. no @-character
-// should be used
+// should be used.
 bool AddAtoNNameExtension(tNMEA0183AISMsg &NMEA0183AISMsg, const char *AtoNName) {
 
   if (strlen(AtoNName) > 20) {
@@ -325,19 +335,20 @@ bool AddAtoNNameExtension(tNMEA0183AISMsg &NMEA0183AISMsg, const char *AtoNName)
     if ( !NMEA0183AISMsg.AddEncodedCharToPayloadBin(NameExtension, extensionBits) ) return false; 
     if ( !AddPaddingTo8bits(NMEA0183AISMsg, extensionBits) ) return false; 
   }
+  return true;
 }
 
+// Spare. 0, 2, 4 or 6 bits of length.
+// Used only when parameter “Name of Aid-to-Navigation Extension”
+// is used. Should be set to zero. The number of spare bits should be adjusted in
+// order to observe byte boundaries.
 bool AddPaddingTo8bits(tNMEA0183AISMsg &NMEA0183AISMsg, size_t bitCount) {
 
     size_t paddingBits = 8 - bitCount % 8;
     if (paddingBits < 8) {
       if ( !NMEA0183AISMsg.AddIntToPayloadBin(0, paddingBits) ) return false;                    // Padding with 2,4,6 bits with value 0 to make the payload be a multiple of 8 bits.
     }
-}
-
-bool AddAtoNType(tNMEA0183AISMsg &NMEA0183AISMsg, tN2kAISAtoNType AtonType) {
-
-  if ( ! NMEA0183AISMsg.AddIntToPayloadBin(AtonType, 5) ) return false;
+    return true;
 }
 
 // *****************************************************************************
